@@ -31,24 +31,36 @@ int copyFile(FILE *sourcefp, char *sourcename, int mask /*0 non executable, othe
 	return flag;*/
 }
 
-void isExecutable(FILE *sourcefp,const char *fname){
-	sourcefp = fopen(fname, "r");
-	struct stat *statfile;
-	char mode;
-	if(stat(fname, statfile)==0){
-		mode_t perm = statfile->st_mode;
-		mode = (perm & S_IXUSR) ? 'x' : '-';
-		printf("%s is %c\n", fname, mode);
+void isExecutable(const char *fname){
+	char *tname ="~/Documents/homework/OS2HomeWork/a.txt";
+	struct stat statfile;
+	if(stat(tname, &statfile)<0){
+		printf("fuck\n");
+		perror("\nerror: \n");
 	}
-	printf("fuck");
+	else{
+		printf( (statfile.st_mode & S_IXUSR) ? "x" : "-");
+		
+	}
+	
+	
 }
 
 //int existsInDir(
  
-int main (int argc, char *argv){
+int main (int argc, char **argv){
 	
 	FILE *test;
-	char *tname ="/a.txt";
-	isExecutable(test, tname);
+	char tname[] ="a.txt";
+	struct stat statfile;
+	if(stat(tname, &statfile)<0){
+		printf("fuck\n");
+		perror("\nerror: \n");
+	}
+	else{
+		printf( (statfile.st_mode & S_IXUSR) ? "x" : "-");
+		
+	}
+	isExecutable(tname);
 	return 0;
 }
