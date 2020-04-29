@@ -12,7 +12,7 @@ int copyFile(FILE *sourcefp, char *sourcename, int mask /*0 non executable, othe
 	FILE * destfp = fopen(sourcename, "w");
 	int samefiles=0;
 	char c;
-	/*if(existsInDir(sourcename, mask)){
+	if(existsInDir(sourcename, mask)){
 		strcat(sourcename,"1");
 		sourcefp = fopen(sourcename, "r");
 	}
@@ -28,24 +28,34 @@ int copyFile(FILE *sourcefp, char *sourcename, int mask /*0 non executable, othe
 		int mask=0777; //da rivedere
 		chmod(destfp, mask);
 	}
-	return flag;*/
+	return flag;
 }
 
-void isExecutable(const char *fname){
-	char *tname ="~/Documents/homework/OS2HomeWork/a.txt";
+int isExecutable(const char *fname){
+	
 	struct stat statfile;
-	if(stat(tname, &statfile)<0){
-		printf("fuck\n");
-		perror("\nerror: \n");
-	}
-	else{
-		printf( (statfile.st_mode & S_IXUSR) ? "x" : "-");
+	if(stat(fname, &statfile)<0){
 		
+		perror("\nerror: \n");
+		return 1;
 	}
-	
-	
+	else
+		return 0;
+
 }
 
+int searchDir(char *startingDir, char *depth){
+	
+	if(startingDir==NULL || *startingDir=='\0')
+		return -1;
+	struct dirent direntry;
+	DIR *directoryname = startingDir;
+	char *nextElement;
+	while ((direntry=opendir(startingDir))&&(depth>-1)){
+		--depth;
+	}
+	return 0;
+}
 //int existsInDir(
  
 int main (int argc, char **argv){
@@ -55,5 +65,11 @@ int main (int argc, char **argv){
 	struct stat statfile;
 	
 	isExecutable(tname);
-	return 0;
+	if(argc<2){ //3 per i processi
+		printf("\nusage: %s <directory> <N for depth> <P for processes\nN=0 to scan only the current directory", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	else
+		return searchDir(argv[1], argv[2]);
+
 }
