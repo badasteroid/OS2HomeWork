@@ -53,14 +53,7 @@ int main (int argc, char **argv){
 	FILE *test;
 	char tname[] ="a.txt";
 	struct stat statfile;
-	if(stat(tname, &statfile)<0){
-		printf("fuck\n");
-		perror("\nerror: \n");
-	}
-	else{
-		printf( (statfile.st_mode & S_IXUSR) ? "x" : "-");
-		
-	}
+	
 	isExecutable(tname);
 	return 0;
 }
