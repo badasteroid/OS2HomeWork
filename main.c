@@ -68,9 +68,9 @@ int searchDir(char *startingDir, int depth){
 			else {
 				if(S_ISREG(statf.st_mode))
 					searchDir(directoryentry->d_name, depth); 			
-				else{
+				else
 					copyFile(directoryentry->d_name);
-				}
+				
 			}
 		
 		}
