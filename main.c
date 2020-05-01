@@ -37,22 +37,39 @@ int isExecutable(const char *fname){
 	if(stat(fname, &statfile)<0){
 		
 		perror("\nerror: \n");
-		return 1;
+		return -1;
 	}
-	else
-		return 0;
+	else{
 
+		if (statfile.st_mode & S_IXUSR){
+			return 0;		
+		}
+		else 
+			return 1;	
+	}
 }
 
-int searchDir(char *startingDir, char *depth){
+int searchDir(char *startingDir, int depth){
 	
 	if(startingDir==NULL || *startingDir=='\0')
 		return -1;
+	struct stat statf;
 	struct dirent direntry;
 	DIR *directoryname = startingDir;
+	
 	char *nextElement;
-	while ((direntry=opendir(startingDir))&&(depth>-1)){
-		--depth;
+	if(depth>-1){
+		while (direntry=opendir(startingDir)){
+			--depth;
+			if(stat(directoryentry->d_name, &statf)<0){
+				return -1;		
+			}
+			else {
+				if(S_ISREG(statf.st_mode))
+					searchDir(directoryentry->d_name, depth); 		
+			}
+		
+		}
 	}
 	return 0;
 }
@@ -70,6 +87,6 @@ int main (int argc, char **argv){
 		exit(EXIT_FAILURE);
 	}
 	else
-		return searchDir(argv[1], argv[2]);
+		return searchDir(argv[1], atoi(argv[2]));
 
 }
