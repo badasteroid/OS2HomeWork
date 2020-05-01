@@ -8,7 +8,8 @@
 #include <limits.h>
 #include <unistd.h>
 
-int copyFile(FILE *sourcefp, char *sourcename, int mask /*0 non executable, other  executable*/){
+int copyFile(char *sourcename){
+	FILE *sourcefp;
 	FILE * destfp = fopen(sourcename, "w");
 	int samefiles=0;
 	char c;
@@ -24,7 +25,7 @@ int copyFile(FILE *sourcefp, char *sourcename, int mask /*0 non executable, othe
 		while(c=fgetc(sourcefp)!=EOF)
 			flag=fputc(c, destfp);
 	}
-	if(mask){
+	if(isExecutable(sourcename)==0){
 		int mask=0777; //da rivedere
 		chmod(destfp, mask);
 	}
@@ -66,7 +67,10 @@ int searchDir(char *startingDir, int depth){
 			}
 			else {
 				if(S_ISREG(statf.st_mode))
-					searchDir(directoryentry->d_name, depth); 		
+					searchDir(directoryentry->d_name, depth); 			
+				else{
+					copyFile(directoryentry->d_name);
+				}
 			}
 		
 		}
