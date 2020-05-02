@@ -10,26 +10,27 @@
 
 int copyFile(char *sourcename){
 	FILE *sourcefp;
-	FILE * destfp = fopen(sourcename, "w");
-	int samefiles=0;
-	char c;
-	if(existsInDir(sourcename, mask)){
-		strcat(sourcename,"1");
-		sourcefp = fopen(sourcename, "r");
-	}
-	else{
-		sourcefp = fopen(sourcename,"r");
-	}
-	int flag=0;
-	if(sourcefp){
-		while(c=fgetc(sourcefp)!=EOF)
-			flag=fputc(c, destfp);
-	}
+	char *destpath;
 	if(isExecutable(sourcename)==0){
 		int mask=0777; //da rivedere
-		chmod(destfp, mask);
+		//chmod(destfp, mask);
+		destpath = strcat("/eseguibili/", sourcename);
+
 	}
-	return flag;
+	else{
+		destpath = strcat("/regolari/", sourcename);
+	}
+	FILE * destfp = fopen(destpath, "w");
+	int samefiles=0;
+	char c;
+	
+	int written=0;
+	if(sourcefp){
+		while(c=fgetc(sourcefp)!=EOF)
+			written=fputc(c, destfp);
+	}
+	
+	return written;
 }
 
 int isExecutable(const char *fname){
@@ -42,9 +43,9 @@ int isExecutable(const char *fname){
 	}
 	else{
 
-		if (statfile.st_mode & S_IXUSR){
+		if (statfile.st_mode & S_IXUSR)
 			return 0;		
-		}
+		
 		else 
 			return 1;	
 	}
@@ -58,9 +59,8 @@ int searchDir(char *startingDir, int depth){
 	struct dirent direntry;
 	DIR *directoryname = startingDir;
 	
-	char *nextElement;
 	if(depth>-1){
-		while (direntry=opendir(startingDir)){
+		while(direntry=opendir(startingDir)){
 			--depth;
 			if(stat(directoryentry->d_name, &statf)<0){
 				return -1;		
